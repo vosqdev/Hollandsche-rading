@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color: #1A1D1A;
+    background-color: #FBF9F5;
+  }
+}
+
+.font-editorial {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.font-mono-subtle {
+  font-family: 'Space Grotesk', monospace;
+}
+
+/* Custom Leaflet Map styling to match architectural aesthetic */
+.leaflet-container {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  background-color: #e5e0d8 !important;
+  outline: none;
+}
+
+.leaflet-popup-content-wrapper {
+  background: #1A1D1A !important;
+  color: #FBF9F5 !important;
+  border-radius: 12px !important;
+  padding: 8px 12px !important;
+  box-shadow: 0 20px 30px -10px rgba(0,0,0,0.3) !important;
+}
+
+.leaflet-popup-tip {
+  background: #1A1D1A !important;
+}
+
+.custom-map-marker {
+  cursor: pointer;
+}
+
+.custom-map-marker > div {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.custom-map-marker:hover > div {
+  transform: scale(1.18);
+}
+
+.custom-map-marker:hover {
+  z-index: 1000 !important;
+}
+
+.custom-project-marker {
+  cursor: pointer;
+}
+
+.custom-project-marker .project-marker-inner,
+.custom-project-marker > div {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.custom-project-marker:hover .project-marker-inner,
+.custom-project-marker:hover > div {
+  transform: scale(1.22);
+}
+
+.custom-project-marker:hover {
+  z-index: 1000 !important;
+}
+
+.custom-cluster-marker {
+  cursor: pointer;
+}
+
+.custom-cluster-marker > div {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.custom-cluster-marker:hover > div {
+  transform: scale(1.15);
+}
+
+.custom-cluster-marker:hover {
+  z-index: 1000 !important;
+}
+
+/* Smooth horizontal scrollbar hiding */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

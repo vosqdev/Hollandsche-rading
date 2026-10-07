@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Public read for approved ideas
+    match /mapIdeas/{ideaId} {
+      allow read: if resource.data.status == 'approved' || (isSignedIn() && resource.data.authorId == request.auth.uid);
+      allow create: if isValidId(ideaId)
+        && request.resource.data.category in ['idee', 'groen', 'wonen', 'verkeer', 'water', 'natuur', 'energie', 'behouden', 'aandachtspunt']
+        && request.resource.data.status == 'pending'
+        && request.resource.data.title is string && request.resource.data.title.size() <= 200
+        && request.resource.data.description is string && request.resource.data.description.size() <= 2000;
+      allow update: if isSignedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['votesCount']);
+    }
+
+    // Survey responses
+    match /responses/{responseId} {
+      allow create: if isValidId(responseId)
+        && request.resource.data.type in ['priorities', 'target_groups', 'wat_moet_blijven'];
+      allow read: if false; // Private to admins
+    }
+
+    // Global settings & events
+    match /projectSettings/{settingId} {
+      allow read: if true;
+      allow write: if false; // Admin only
+    }
+
+    match /events/{eventId} {
+      allow read: if true;
+      allow write: if false; // Admin only
+    }
+  }
+}

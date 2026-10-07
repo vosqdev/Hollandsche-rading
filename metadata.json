@@ -1,0 +1,6 @@
+{
+  "name": "Dorpsrand Hollandsche Rading",
+  "description": "Denk mee over de toekomst van Hollandsche Rading. Ontdek de denkrichtingen voor woningbouw, natuur en leefbaarheid en deel direct uw mening en ideeën.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

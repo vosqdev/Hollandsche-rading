@@ -1,0 +1,102 @@
+{
+  "entities": {
+    "Participant": {
+      "title": "Participant",
+      "description": "Anonymous or identified community member participating in the Hollandsche Rading exploration",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "sessionToken": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "votedIdeaIds": { "type": "array" }
+      },
+      "required": ["id", "createdAt"]
+    },
+    "MapIdea": {
+      "title": "MapIdea",
+      "description": "Spatial idea or preservation point placed on the map of Hollandsche Rading",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "category": { "type": "string", "enum": ["idee", "groen", "wonen", "verkeer", "water", "natuur", "energie", "behouden", "aandachtspunt"] },
+        "title": { "type": "string", "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "authorName": { "type": "string", "maxLength": 120 },
+        "authorEmail": { "type": "string", "maxLength": 256 },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "votesCount": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "category", "title", "description", "lat", "lng", "status", "votesCount", "createdAt"]
+    },
+    "Response": {
+      "title": "Response",
+      "description": "Survey response for priorities, target groups, or what must remain",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "participantId": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "enum": ["priorities", "target_groups", "wat_moet_blijven"] },
+        "selectedKeys": { "type": "array" },
+        "customText": { "type": "string", "maxLength": 3000 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "participantId", "type", "createdAt"]
+    },
+    "ProjectSettings": {
+      "title": "ProjectSettings",
+      "description": "Global project status, phase and announcements",
+      "type": "object",
+      "properties": {
+        "currentPhase": { "type": "number" },
+        "phaseName": { "type": "string", "maxLength": 100 },
+        "title": { "type": "string", "maxLength": 200 },
+        "participationOpen": { "type": "boolean" },
+        "activeAnnouncement": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["currentPhase", "phaseName", "title", "participationOpen"]
+    },
+    "AgendaEvent": {
+      "title": "AgendaEvent",
+      "description": "Community sessions, walks, and presentations",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 200 },
+        "type": { "type": "string", "maxLength": 50 },
+        "date": { "type": "string", "maxLength": 50 },
+        "time": { "type": "string", "maxLength": 50 },
+        "location": { "type": "string", "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "spotsTotal": { "type": "number" },
+        "spotsBooked": { "type": "number" }
+      },
+      "required": ["id", "title", "date", "time", "location"]
+    }
+  },
+  "firestore": {
+    "/participants/{participantId}": {
+      "schema": "Participant",
+      "description": "Participant profiles and voting trackers"
+    },
+    "/mapIdeas/{ideaId}": {
+      "schema": "MapIdea",
+      "description": "Geographical participation ideas and markers"
+    },
+    "/responses/{responseId}": {
+      "schema": "Response",
+      "description": "Participant questionnaire submissions"
+    },
+    "/projectSettings/{settingId}": {
+      "schema": "ProjectSettings",
+      "description": "System-wide settings and current exploration phase"
+    },
+    "/events/{eventId}": {
+      "schema": "AgendaEvent",
+      "description": "Community timeline events and registration"
+    }
+  }
+}
