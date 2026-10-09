@@ -196,29 +196,29 @@ export const SectionContactFooter: React.FC<FooterProps> = ({ onOpenAdmin, onOpe
               <a href="#participatie" className="hover:text-[#85A38C] transition-colors">
                 03 · Participatie Prioriteiten
               </a>
-              <a href="#interactieve-kaart" className="hover:text-[#85A38C] transition-colors">
-                04 · Interactieve Kaart
-              </a>
               <a href="#denkrichtingen" className="hover:text-[#85A38C] transition-colors">
-                05 · Denkrichtingen
+                04 · Denkrichtingen
               </a>
               <a href="#doelgroepen" className="hover:text-[#85A38C] transition-colors">
-                06 · Doelgroepen
+                05 · Doelgroepen
               </a>
               <a href="#proces" className="hover:text-[#85A38C] transition-colors">
-                07 · Proces &amp; Fasering
+                06 · Proces &amp; Fasering
               </a>
               <a href="#agenda" className="hover:text-[#85A38C] transition-colors">
-                08 · Agenda &amp; Bijeenkomsten
+                07 · Agenda &amp; Bijeenkomsten
               </a>
               <a href="#documenten" className="hover:text-[#85A38C] transition-colors">
-                09 · Documenten &amp; Kaders
+                08 · Documenten &amp; Kaders
               </a>
               <a href="#participatie-dashboard" className="hover:text-[#85A38C] transition-colors">
-                10 · Participatiemonitor
+                09 · Participatiemonitor
               </a>
               <a href="#faq" className="hover:text-[#85A38C] transition-colors">
-                11 · Veelgestelde Vragen
+                10 · Veelgestelde Vragen
+              </a>
+              <a href="#kaart" className="text-[#85A38C] hover:text-white transition-colors font-medium mt-1 flex items-center gap-1">
+                <span>📍 Interactieve Gebiedskaart (Aparte pagina)</span>
               </a>
             </div>
           </div>

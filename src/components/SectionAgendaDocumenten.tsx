@@ -62,7 +62,7 @@ Datum van download: ${new Date().toLocaleDateString('nl-NL')}
         <div id="agenda">
           <div className="max-w-3xl mb-12">
             <span className="text-xs uppercase tracking-[0.25em] font-mono-subtle text-[#8C7B6B] block mb-3">
-              08 / Bijeenkomsten &amp; Agenda
+              07 / Bijeenkomsten &amp; Agenda
             </span>
             <h2
               className="font-light tracking-tight text-[#1A1D1A] leading-tight"
@@ -132,7 +132,7 @@ Datum van download: ${new Date().toLocaleDateString('nl-NL')}
         <div id="documenten">
           <div className="max-w-3xl mb-8">
             <span className="text-xs uppercase tracking-[0.25em] font-mono-subtle text-[#8C7B6B] block mb-3">
-              09 / Kennis &amp; Gemeentelijk Beleidskader
+              08 / Kennis &amp; Gemeentelijk Beleidskader
             </span>
             <h2
               className="font-light tracking-tight text-[#1A1D1A] leading-tight"

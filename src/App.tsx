@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { Mail } from 'lucide-react';
 import { Preloader } from './components/Preloader';
 import { Navigation } from './components/Navigation';
 import { Hero } from './components/Hero';
@@ -29,14 +30,14 @@ import { LegalModal, LegalTab } from './components/legal/LegalModal';
 import { CookieBanner } from './components/legal/CookieBanner';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'verkenning' | 'woondata' | 'omgevingswet'>('verkenning');
+  const [currentPage, setCurrentPage] = useState<'verkenning' | 'woondata' | 'omgevingswet' | 'kaart'>('verkenning');
   const [isSysteembeheerOpen, setIsSysteembeheerOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isNewsletterOpen, setIsNewsletterOpen] = useState(false);
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [legalTab, setLegalTab] = useState<LegalTab>('privacy');
 
-  // Support direct `/admin`, `#admin`, `#woondata`, `#omgevingswet`, or legal hash routing
+  // Support direct `/admin`, `#admin`, `#woondata`, `#omgevingswet`, `#kaart`, or legal hash routing
   useEffect(() => {
     const checkHash = () => {
       if (window.location.hash === '#admin' || window.location.pathname === '/admin') {
@@ -46,6 +47,13 @@ export default function App() {
         setCurrentPage('woondata');
       } else if (window.location.hash === '#omgevingswet' || window.location.pathname === '/omgevingswet') {
         setCurrentPage('omgevingswet');
+      } else if (
+        window.location.hash === '#kaart' ||
+        window.location.hash === '#interactieve-kaart' ||
+        window.location.hash === '#gebiedskaart' ||
+        window.location.pathname === '/kaart'
+      ) {
+        setCurrentPage('kaart');
       } else if (window.location.hash === '#privacy') {
         setLegalTab('privacy');
         setIsLegalOpen(true);
@@ -74,6 +82,12 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleOpenKaart = () => {
+    setCurrentPage('kaart');
+    window.location.hash = '#kaart';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleOpenLegal = (tab: LegalTab) => {
     setLegalTab(tab);
     setIsLegalOpen(true);
@@ -81,7 +95,13 @@ export default function App() {
 
   const handleBackToVerkenning = () => {
     setCurrentPage('verkenning');
-    if (window.location.hash === '#woondata' || window.location.hash === '#omgevingswet') {
+    if (
+      window.location.hash === '#woondata' ||
+      window.location.hash === '#omgevingswet' ||
+      window.location.hash === '#kaart' ||
+      window.location.hash === '#interactieve-kaart' ||
+      window.location.hash === '#gebiedskaart'
+    ) {
       history.pushState(null, '', window.location.pathname);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -120,14 +140,23 @@ export default function App() {
             setTimeout(handleParticipateClick, 100);
           }}
         />
+      ) : currentPage === 'kaart' ? (
+        <SectionInteractieveKaart
+          isStandalonePage={true}
+          onBack={handleBackToVerkenning}
+          onOpenWoondata={handleOpenWoondata}
+          onOpenNewsletter={() => setIsNewsletterOpen(true)}
+        />
       ) : (
         <>
           {/* Global Navigation */}
           <Navigation
             onOpenAdmin={() => setIsSysteembeheerOpen(true)}
             onOpenNewsletter={() => setIsNewsletterOpen(true)}
+            onOpenKaart={handleOpenKaart}
             onOpenWoondata={handleOpenWoondata}
             onOpenOmgevingswet={handleOpenOmgevingswet}
+            currentPage={currentPage}
           />
 
           <main>
@@ -137,37 +166,34 @@ export default function App() {
               onParticipateClick={handleParticipateClick}
             />
 
-            {/* Section: De Plek (Leaflet map with layers) */}
+            {/* Section 01: De Plek (Leaflet map with layers) */}
             <SectionPlek />
 
-            {/* Section: Waarom deze verkenning? (Storytelling sequence: Wonen, Landschap, Verkeer, Water, Natuur, Energie) */}
+            {/* Section 02: Waarom deze verkenning? (Storytelling sequence: Wonen, Landschap, Verkeer, Water, Natuur, Energie) */}
             <SectionStorySequence />
 
-            {/* Section: Participatie Prioriteiten (Max 5, real aggregates) */}
+            {/* Section 03: Participatie Prioriteiten (Max 5, real aggregates) */}
             <SectionPrioriteiten />
 
-            {/* Section: Interactieve Gebiedskaart (Place idea pin on map) */}
-            <SectionInteractieveKaart />
-
-            {/* Section: Drie Denkrichtingen (Richting A, B, C) */}
+            {/* Section 04: Drie Denkrichtingen (Richting A, B, C) */}
             <SectionDenkrichtingen />
 
-            {/* Section: Doelgroepen (Voor wie mist Hollandsche Rading woningen?) */}
+            {/* Section 05: Doelgroepen (Voor wie mist Hollandsche Rading woningen?) */}
             <SectionDoelgroepen />
 
             {/* Section: Wat Moet Blijven? (Emotional values & identity) */}
             <SectionWatMoetBlijven />
 
-            {/* Section 07: Het Proces (7 fasen, We zijn hier) */}
+            {/* Section 06: Het Proces (7 fasen, We zijn hier) */}
             <SectionProces onOpenOmgevingswet={handleOpenOmgevingswet} />
 
-            {/* Section 08 & 09: Bijeenkomsten, Agenda & Gemeentelijk Beleidskader */}
+            {/* Section 07 & 08: Bijeenkomsten, Agenda & Gemeentelijk Beleidskader */}
             <SectionAgendaDocumenten />
 
-            {/* Section 10: Participatiemonitor & Voortgang (Dashboard) */}
+            {/* Section 09: Participatiemonitor & Voortgang (Dashboard) */}
             <SectionParticipatieDashboard />
 
-            {/* Section 11: Veelgestelde Vragen (FAQ) */}
+            {/* Section 10: Veelgestelde Vragen (FAQ) */}
             <SectionFAQ />
           </main>
 
@@ -178,6 +204,23 @@ export default function App() {
           />
         </>
       )}
+
+      {/* Floating Nieuwsbrief Button (Links onderin, beweegt continu mee over de website) */}
+      <button
+        type="button"
+        onClick={() => setIsNewsletterOpen(true)}
+        className="fixed bottom-6 left-6 z-40 bg-[#1A1D1A]/95 hover:bg-[#252E25] text-[#FBF9F5] border border-[#3D5A45] hover:border-[#4ADE80] shadow-2xl hover:shadow-[#3D5A45]/30 rounded-full pl-3.5 pr-4 py-2.5 flex items-center gap-2.5 text-xs font-semibold transition-all duration-200 group active:scale-95 cursor-pointer backdrop-blur-md"
+        aria-label="Aanmelden dorpsnieuwsbrief"
+        title="Blijf op de hoogte via de dorpsnieuwsbrief"
+        id="floating-newsletter-btn"
+      >
+        <span className="relative flex h-2.5 w-2.5 shrink-0">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4ADE80] opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#22C55E]"></span>
+        </span>
+        <Mail className="w-4 h-4 text-[#85A38C] group-hover:text-[#4ADE80] transition-colors shrink-0" />
+        <span className="tracking-tight text-white font-medium">Nieuwsbrief</span>
+      </button>
 
       {/* Systeembeheer Toegang & Downloads Modal */}
       <SysteembeheerModal

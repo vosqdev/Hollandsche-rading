@@ -35,8 +35,15 @@
   background: #1A1D1A !important;
 }
 
+.leaflet-div-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
 .custom-map-marker {
   cursor: pointer;
+  background: transparent !important;
+  border: none !important;
 }
 
 .custom-map-marker > div {
@@ -54,6 +61,8 @@
 
 .custom-project-marker {
   cursor: pointer;
+  background: transparent !important;
+  border: none !important;
 }
 
 .custom-project-marker .project-marker-inner,

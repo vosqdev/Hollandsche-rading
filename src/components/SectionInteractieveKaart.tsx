@@ -30,6 +30,9 @@ import {
   ToggleRight,
   ChevronRight,
   ExternalLink,
+  ArrowLeft,
+  Mail,
+  BarChart3,
 } from 'lucide-react';
 import { store, calculatePolygonAreaHa, MapViewConfig, DEFAULT_MAP_VIEW } from '../services/store';
 import { MapIdea, CategoryType } from '../types';
@@ -136,7 +139,19 @@ function computeClusters(map: L.Map, currentIdeas: MapIdea[], radiusPx = 48): Id
   return clusters;
 }
 
-export const SectionInteractieveKaart: React.FC = () => {
+export interface SectionInteractieveKaartProps {
+  onBack?: () => void;
+  onOpenWoondata?: () => void;
+  onOpenNewsletter?: () => void;
+  isStandalonePage?: boolean;
+}
+
+export const SectionInteractieveKaart: React.FC<SectionInteractieveKaartProps> = ({
+  onBack,
+  onOpenWoondata,
+  onOpenNewsletter,
+  isStandalonePage = false,
+}) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const osmTileLayerRef = useRef<L.TileLayer | null>(null);
@@ -456,50 +471,52 @@ export const SectionInteractieveKaart: React.FC = () => {
         className: 'custom-project-marker',
         html: `
           <div class="project-marker-inner" style="
-            background-color: #141714;
+            background: #141F16;
             color: #ffffff;
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 2.5px solid ${statusInfo.border};
-            box-shadow: 0 4px 14px rgba(0,0,0,0.7), 0 0 12px ${statusInfo.glow};
+            box-shadow: 0 4px 16px rgba(0,0,0,0.65), 0 0 14px ${statusInfo.glow};
             cursor: pointer;
             position: relative;
           ">
-            <span style="
-              font-size: 21px;
-              line-height: 1;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-              user-select: none;
-            " role="img" aria-label="Woningbouwproject">🏠</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF" stroke="#141F16" stroke-width="0.75" style="filter: drop-shadow(0 2px 3px rgba(0,0,0,0.8)); display: block;">
+              <path d="M12 2.5L2 11.5h3v9h6v-6h2v6h6v-9h3L12 2.5z"/>
+            </svg>
             <span style="
               position: absolute;
-              bottom: -4px;
-              right: -4px;
+              bottom: -3px;
+              right: -3px;
               width: 12px;
               height: 12px;
               border-radius: 50%;
               background: ${statusInfo.dot};
-              border: 2px solid #141714;
-              box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+              border: 2px solid #141F16;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.7);
             "></span>
           </div>
         `,
-        iconSize: [38, 38],
-        iconAnchor: [19, 19],
-        popupAnchor: [0, -19],
+        iconSize: [44, 44],
+        iconAnchor: [22, 22],
+        popupAnchor: [0, -22],
       });
 
       const marker = L.marker([prj.coords[0], prj.coords[1]], {
         icon: projectIcon,
-        zIndexOffset: 600,
+        zIndexOffset: 650,
       });
+
+      marker.bindTooltip(
+        `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; padding: 2px 4px; color: #1A1D1A;">
+          <strong>🏠 ${prj.naam}</strong><br/>
+          <span style="color: #2D5A3D; font-weight: 600;">${prj.aantalWoningen} woningen</span> · ${prj.status}
+        </div>`,
+        { direction: 'top', offset: [0, -22] }
+      );
 
       marker.bindPopup(`
         <div style="font-family: 'Plus Jakarta Sans', sans-serif; max-width: 290px; padding: 4px; color: #FBF9F5;">
@@ -717,6 +734,27 @@ export const SectionInteractieveKaart: React.FC = () => {
     renderMarkers(map);
     renderProjectMarkers(map);
 
+    const timer1 = setTimeout(() => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+      }
+    }, 100);
+
+    const timer2 = setTimeout(() => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+        renderMarkers(mapInstanceRef.current);
+        renderProjectMarkers(mapInstanceRef.current);
+      }
+    }, 350);
+
+    const handleResize = () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+      }
+    };
+    window.addEventListener('resize', handleResize);
+
     const unsub = store.subscribe(() => {
       const approved = store.getApprovedIdeas();
       const all = store.getMapIdeas();
@@ -739,6 +777,9 @@ export const SectionInteractieveKaart: React.FC = () => {
     });
 
     return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      window.removeEventListener('resize', handleResize);
       map.remove();
       mapInstanceRef.current = null;
       markersLayerRef.current = null;
@@ -928,27 +969,71 @@ export const SectionInteractieveKaart: React.FC = () => {
   const filteredProjects = getFilteredProjects();
 
   return (
-    <section id="interactieve-kaart" className="py-24 md:py-36 bg-[#1A1D1A] text-[#FBF9F5] border-b border-[#2C302C]">
-      <div className="max-w-7xl mx-auto px-6 sm:px-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-8">
-          <div className="max-w-2xl">
-            <span className="text-xs uppercase tracking-[0.25em] font-mono-subtle text-[#8C7B6B] block mb-3">
-              04 / Interactieve Gebiedskaart
-            </span>
-            <h2
-              className="font-light tracking-tight text-[#FBF9F5] leading-tight"
-              style={{ fontSize: 'clamp(2.2rem, 5vw, 4.2rem)' }}
+    <div className={isStandalonePage || onBack ? 'min-h-screen bg-[#141814] text-[#FBF9F5]' : ''}>
+      {/* Top sticky navigation bar for standalone page */}
+      {(isStandalonePage || onBack) && (
+        <header className="sticky top-0 z-40 bg-[#141814]/95 backdrop-blur-md border-b border-[#2C342C] py-3.5 px-4 sm:px-8">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <button
+              onClick={onBack}
+              className="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-[#D5CDC0] hover:text-white transition-colors bg-[#1E251E] hover:bg-[#283228] px-3.5 py-2 rounded-lg border border-[#303D31] shadow-xs cursor-pointer"
+              title="Terug naar de dorpsrandverkenning"
             >
-              ZET JE IDEE
-              <br />
-              <span className="font-editorial italic text-[#85A38C]">
-                OP DE KAART.
+              <ArrowLeft className="w-4 h-4 text-[#4ADE80]" />
+              <span>Terug naar dorpsrandverkenning</span>
+            </button>
+
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1C241D] text-[#86EFAC] text-xs font-mono-subtle border border-[#2E4834]">
+                <MapPin className="w-3.5 h-3.5 text-[#4ADE80]" />
+                <span>Gebiedskaart De Bilt &amp; Hollandsche Rading</span>
               </span>
-            </h2>
-            <p className="text-sm sm:text-base text-[#D5CDC0] font-light mt-4">
-              Wijs een exacte plek aan in het verkenningsgebied. Deel een idee, een waarschuwing of juist wat hier absoluut behouden moet blijven. Dicht bij elkaar gelegen ideeën worden gebundeld en vouwen uit bij inzoomen.
-            </p>
+
+              {onOpenWoondata && (
+                <button
+                  onClick={onOpenWoondata}
+                  className="text-xs px-3 py-2 rounded-lg bg-[#202720] hover:bg-[#2A342B] text-[#D5CDC0] hover:text-white border border-[#303D31] font-medium transition-colors hidden sm:flex items-center gap-1.5"
+                >
+                  <BarChart3 className="w-3.5 h-3.5 text-[#4ADE80]" />
+                  <span>Woondata</span>
+                </button>
+              )}
+
+              {onOpenNewsletter && (
+                <button
+                  onClick={onOpenNewsletter}
+                  className="text-xs px-3 py-2 rounded-lg bg-[#3D5A45] hover:bg-[#2C4030] text-white font-medium transition-colors flex items-center gap-1.5 shadow-sm"
+                >
+                  <Mail className="w-3.5 h-3.5 text-[#A3B8A8]" />
+                  <span>Nieuwsbrief</span>
+                </button>
+              )}
+            </div>
           </div>
+        </header>
+      )}
+
+      <section id="interactieve-kaart" className={`${isStandalonePage || onBack ? 'py-8 sm:py-14' : 'py-24 md:py-36'} bg-[#1A1D1A] text-[#FBF9F5] border-b border-[#2C302C]`}>
+        <div className="max-w-7xl mx-auto px-6 sm:px-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-8">
+            <div className="max-w-2xl">
+              <span className="text-xs uppercase tracking-[0.25em] font-mono-subtle text-[#4ADE80] block mb-3 font-semibold">
+                Interactieve Gebiedskaart &amp; Projecten
+              </span>
+              <h1
+                className="font-light tracking-tight text-[#FBF9F5] leading-tight"
+                style={{ fontSize: 'clamp(2.2rem, 5vw, 4.2rem)' }}
+              >
+                ZET JE IDEE
+                <br />
+                <span className="font-editorial italic text-[#85A38C]">
+                  OP DE KAART.
+                </span>
+              </h1>
+              <p className="text-sm sm:text-base text-[#D5CDC0] font-light mt-4">
+                Wijs een exacte plek aan in het verkenningsgebied of bekijk alle 9 actuele woningbouwprojecten in De Bilt, Bilthoven, Maartensdijk en Hollandsche Rading (huisje-iconen). Dicht bij elkaar gelegen ideeën vouwen uit bij inzoomen.
+              </p>
+            </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <button
@@ -1192,8 +1277,13 @@ export const SectionInteractieveKaart: React.FC = () => {
                 if (mapInstanceRef.current) {
                   renderProjectMarkers(mapInstanceRef.current);
                 }
+                if (next) {
+                  setNotificationMsg('✓ 9 Woningbouwprojecten met huisje-iconen nu zichtbaar op de kaart!');
+                  setTimeout(() => setNotificationMsg(null), 4000);
+                  handleCenterAllProjects();
+                }
               }}
-              className={`px-3.5 py-2 rounded-xl font-medium transition-all flex items-center gap-2 ${
+              className={`px-3.5 py-2 rounded-xl font-semibold transition-all flex items-center gap-2 ${
                 showProjectsLayer
                   ? 'bg-[#1E3A5F] text-[#BAE6FD] shadow-xs border border-[#38BDF8]/40'
                   : 'bg-[#1A1D1A] text-[#8C7B6B] border border-[#333] hover:text-[#D5CDC0]'
@@ -1216,18 +1306,18 @@ export const SectionInteractieveKaart: React.FC = () => {
               <button
                 type="button"
                 onClick={handleCenterHollandscheRading}
-                className="px-3 py-1.5 rounded-lg bg-[#242824] hover:bg-[#2C332C] text-xs text-[#A3D9AE] border border-[#3A403A] transition-colors flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-lg bg-[#242824] hover:bg-[#2C332C] text-xs text-[#A3D9AE] border border-[#3A403A] transition-colors flex items-center gap-1.5 font-medium"
               >
                 <span>📍</span>
-                <span>Focus Hollandsche Rading</span>
+                <span>Focus Hollandsche Rading (3)</span>
               </button>
               <button
                 type="button"
                 onClick={handleCenterAllProjects}
-                className="px-3 py-1.5 rounded-lg bg-[#242824] hover:bg-[#2C332C] text-xs text-[#85A38C] border border-[#3A403A] transition-colors flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-lg bg-[#192E47] hover:bg-[#233C5B] text-xs text-[#7DD3FC] border border-[#38BDF8]/40 transition-colors flex items-center gap-1.5 font-semibold shadow-xs"
               >
-                <span>🗺️</span>
-                <span>Alle projecten De Bilt ({WONINGBOUW_PROJECTEN.length})</span>
+                <span>🏠</span>
+                <span>Toon alle 9 projecten De Bilt &amp; kernen</span>
               </button>
             </div>
           )}
@@ -1812,5 +1902,6 @@ export const SectionInteractieveKaart: React.FC = () => {
         )}
       </div>
     </section>
+  </div>
   );
 };

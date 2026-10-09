@@ -89,7 +89,7 @@ export const SectionDenkrichtingen: React.FC = () => {
         {/* Editorial Section Header */}
         <div className="max-w-4xl mb-12">
           <span className="text-xs uppercase tracking-[0.25em] font-mono-subtle text-[#8C7B6B] block mb-3">
-            05 / Denkrichtingen
+            04 / Denkrichtingen
           </span>
           <h2
             className="font-light tracking-tight text-[#1A1D1A] leading-[1.02]"

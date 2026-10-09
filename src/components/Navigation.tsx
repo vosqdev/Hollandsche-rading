@@ -11,6 +11,7 @@ import {
   Clock,
   HelpCircle,
   Users,
+  MapPin,
 } from 'lucide-react';
 import { store } from '../services/store';
 import { ProjectSettings } from '../types';
@@ -18,14 +19,18 @@ import { ProjectSettings } from '../types';
 interface NavigationProps {
   onOpenAdmin: () => void;
   onOpenNewsletter: () => void;
+  onOpenKaart: () => void;
   onOpenWoondata?: () => void;
   onOpenOmgevingswet?: () => void;
+  currentPage?: string;
 }
 
 export const Navigation: React.FC<NavigationProps> = ({
   onOpenAdmin,
   onOpenNewsletter,
+  onOpenKaart,
   onOpenWoondata,
+  currentPage,
 }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -51,12 +56,11 @@ export const Navigation: React.FC<NavigationProps> = ({
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
 
-      // Detect current section on viewport
+      // Detect current section on viewport (chapters 01 - 10)
       const sections = [
         'de-plek',
         'waarom-deze-verkenning',
         'participatie',
-        'interactieve-kaart',
         'denkrichtingen',
         'doelgroepen',
         'proces',
@@ -94,23 +98,22 @@ export const Navigation: React.FC<NavigationProps> = ({
     };
   }, []);
 
-  // Primary navigation items (in center: chapters 01 - 05 in sequential order)
+  // Primary navigation items (chapters 01 - 05 in sequential order)
   const primaryLinks = [
     { id: 'de-plek', number: '01', label: 'De Plek', href: '#de-plek' },
     { id: 'waarom-deze-verkenning', number: '02', label: 'Opgaven', href: '#waarom-deze-verkenning' },
     { id: 'participatie', number: '03', label: 'Participatie', href: '#participatie' },
-    { id: 'interactieve-kaart', number: '04', label: 'Kaart', href: '#interactieve-kaart' },
-    { id: 'denkrichtingen', number: '05', label: 'Denkrichtingen', href: '#denkrichtingen' },
+    { id: 'denkrichtingen', number: '04', label: 'Denkrichtingen', href: '#denkrichtingen' },
+    { id: 'doelgroepen', number: '05', label: 'Doelgroepen', href: '#doelgroepen' },
   ];
 
-  // Secondary items under 'Meer' dropdown (chapters 06 - 11 in sequential order)
+  // Secondary items under 'Meer' dropdown (chapters 06 - 10 in sequential order)
   const moreLinks = [
-    { id: 'doelgroepen', number: '06', label: 'Doelgroepen', href: '#doelgroepen', icon: Users },
-    { id: 'proces', number: '07', label: 'Proces & Fasering', href: '#proces', icon: Clock },
-    { id: 'agenda', number: '08', label: 'Agenda & Bijeenkomsten', href: '#agenda', icon: Calendar },
-    { id: 'documenten', number: '09', label: 'Documenten & Beleid', href: '#documenten', icon: FileText },
-    { id: 'participatie-dashboard', number: '10', label: 'Participatiemonitor', href: '#participatie-dashboard', icon: BarChart3 },
-    { id: 'faq', number: '11', label: 'Veelgestelde Vragen', href: '#faq', icon: HelpCircle },
+    { id: 'proces', number: '06', label: 'Proces & Fasering', href: '#proces', icon: Clock },
+    { id: 'agenda', number: '07', label: 'Agenda & Bijeenkomsten', href: '#agenda', icon: Calendar },
+    { id: 'documenten', number: '08', label: 'Documenten & Beleid', href: '#documenten', icon: FileText },
+    { id: 'participatie-dashboard', number: '09', label: 'Participatiemonitor', href: '#participatie-dashboard', icon: BarChart3 },
+    { id: 'faq', number: '10', label: 'Veelgestelde Vragen', href: '#faq', icon: HelpCircle },
   ];
 
   const isMoreActive = moreLinks.some((l) => l.id === activeSection);
@@ -191,7 +194,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                 <div className="absolute top-full right-0 mt-2 w-72 bg-[#FBF9F5] border border-[#D5CDC0] shadow-xl rounded-xl py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                   <div className="px-3.5 py-1.5 text-[10px] font-mono-subtle uppercase tracking-wider text-[#8C7B6B] border-b border-[#EAE4D7] mb-1 font-semibold flex items-center justify-between">
                     <span>Onderdelen</span>
-                    <span>06 – 11</span>
+                    <span>06 – 10</span>
                   </div>
 
                   {moreLinks.map((subItem) => {
@@ -221,7 +224,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             </div>
           </nav>
 
-          {/* ZONE 3: Rechts - Acties (Woondata, Nieuwsbrief, Beheer) */}
+          {/* ZONE 3: Rechts - Acties (Woondata, Interactieve Kaart, Beheer) */}
           <div className="hidden sm:flex items-center space-x-2.5 shrink-0">
             {/* Secundaire Outlined Button: Woondata */}
             {onOpenWoondata && (
@@ -237,15 +240,20 @@ export const Navigation: React.FC<NavigationProps> = ({
               </button>
             )}
 
-            {/* Enige Primaire Groene CTA: Nieuwsbrief */}
+            {/* Primaire Groene CTA: Interactieve Kaart */}
             <button
               type="button"
-              onClick={onOpenNewsletter}
-              className="px-4 py-2 rounded-lg bg-[#3D5A45] hover:bg-[#2C4030] text-white text-xs font-medium flex items-center gap-1.5 transition-colors shadow-xs hover:shadow-sm"
-              id="nav-newsletter-btn"
+              onClick={onOpenKaart}
+              className={`px-4 py-2 rounded-lg font-semibold text-xs flex items-center gap-1.5 transition-all shadow-xs hover:shadow-sm ${
+                currentPage === 'kaart'
+                  ? 'bg-[#2E4733] text-[#DCFCE7] ring-2 ring-[#4ADE80]'
+                  : 'bg-[#3D5A45] hover:bg-[#2C4030] text-white'
+              }`}
+              id="nav-kaart-btn"
+              title="Open de Interactieve Gebiedskaart & Woningbouwprojecten"
             >
-              <span>Nieuwsbrief</span>
-              <ArrowUpRight className="w-3 h-3 text-[#A3B8A8]" />
+              <MapPin className="w-3.5 h-3.5 text-[#A3B8A8]" />
+              <span>Interactieve Kaart</span>
             </button>
 
             {/* Tertiary Rustige Button met Shield: Beheer */}
@@ -328,7 +336,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             <div className="pt-4 border-t border-[#E2DDD2]">
               <span className="text-[10px] font-mono-subtle uppercase tracking-wider text-[#8C7B6B] block mb-2 font-semibold flex items-center justify-between">
                 <span>Vervolg Onderdelen</span>
-                <span>06 – 11</span>
+                <span>06 – 10</span>
               </span>
               <div className="space-y-1">
                 {moreLinks.map((subItem) => (
@@ -368,12 +376,13 @@ export const Navigation: React.FC<NavigationProps> = ({
               type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
-                onOpenNewsletter();
+                onOpenKaart();
               }}
               className="w-full py-3 px-4 rounded-xl bg-[#3D5A45] hover:bg-[#2C4030] text-white font-medium text-sm flex items-center justify-center gap-2 transition-colors shadow-xs"
+              id="mobile-nav-kaart-btn"
             >
-              <span>Aanmelden Nieuwsbrief</span>
-              <ArrowUpRight className="w-4 h-4 text-[#A3B8A8]" />
+              <MapPin className="w-4 h-4 text-[#A3B8A8]" />
+              <span>Open Interactieve Gebiedskaart</span>
             </button>
 
             <button

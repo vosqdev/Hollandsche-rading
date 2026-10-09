@@ -233,7 +233,7 @@ export const SectionParticipatieDashboard: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 pb-8 border-b border-[#E2DDD2]">
             <div>
               <span className="text-xs uppercase tracking-[0.25em] font-mono-subtle text-[#8C7B6B] block mb-3">
-                10 / Participatiemonitor &amp; Voortgang
+                09 / Participatiemonitor &amp; Voortgang
               </span>
               <h2
                 className="font-light tracking-tight text-[#1A1D1A] leading-tight font-editorial"

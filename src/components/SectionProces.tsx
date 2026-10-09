@@ -120,7 +120,7 @@ export const SectionProces: React.FC<SectionProcesProps> = ({ onOpenOmgevingswet
       <div className="max-w-7xl mx-auto px-6 sm:px-12">
         <div className="max-w-3xl mb-12">
           <span className="text-xs uppercase tracking-[0.25em] font-mono-subtle text-[#8C7B6B] block mb-3">
-            07 / Proces &amp; Fasering
+            06 / Proces &amp; Fasering
           </span>
           <h2
             className="font-light tracking-tight text-[#1A1D1A] leading-tight mb-4"
