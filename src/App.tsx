@@ -135,6 +135,7 @@ export default function App() {
       ) : currentPage === 'woondata' ? (
         <WoningmarktDashboard
           onBack={handleBackToVerkenning}
+          onNavigateToKaart={handleOpenKaart}
           onNavigateToParticipatie={() => {
             handleBackToVerkenning();
             setTimeout(handleParticipateClick, 100);

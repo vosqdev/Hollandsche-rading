@@ -36,6 +36,7 @@ import { store } from '../../services/store';
 interface WoningmarktDashboardProps {
   onBack: () => void;
   onNavigateToParticipatie?: () => void;
+  onNavigateToKaart?: () => void;
 }
 
 type TabType =
@@ -48,6 +49,7 @@ type TabType =
 export const WoningmarktDashboard: React.FC<WoningmarktDashboardProps> = ({
   onBack,
   onNavigateToParticipatie,
+  onNavigateToKaart,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>('overzicht');
   const [hoveredGboIndex, setHoveredGboIndex] = useState<number | null>(null);
@@ -219,9 +221,9 @@ export const WoningmarktDashboard: React.FC<WoningmarktDashboardProps> = ({
               <span>Benchmark &amp; Regio</span>
             </button>
 
-            {onNavigateToParticipatie && (
+            {(onNavigateToKaart || onNavigateToParticipatie) && (
               <button
-                onClick={onNavigateToParticipatie}
+                onClick={onNavigateToKaart || onNavigateToParticipatie}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs text-[#93B89B] hover:text-[#DCFCE7] hover:bg-[#252B25] transition-all shrink-0 ml-auto border border-[#3A453A]"
                 title="Bekijk de dorpskaart met woningbouwprojecten"
               >
@@ -1212,10 +1214,10 @@ export const WoningmarktDashboard: React.FC<WoningmarktDashboardProps> = ({
                 </div>
               </div>
 
-              {onNavigateToParticipatie && (
+              {(onNavigateToKaart || onNavigateToParticipatie) && (
                 <button
                   type="button"
-                  onClick={onNavigateToParticipatie}
+                  onClick={onNavigateToKaart || onNavigateToParticipatie}
                   className="px-4 py-2.5 rounded-xl bg-[#3D5A45] hover:bg-[#2F4535] text-white text-xs font-semibold flex items-center justify-center gap-2 transition-all shadow-sm shrink-0"
                 >
                   <span>Naar interactieve dorpskaart</span>
